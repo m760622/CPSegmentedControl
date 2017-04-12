@@ -13,7 +13,7 @@ Custom SegmentedControl replace UISegmentedControl.
 github "cp3hnu/CPSegmentedControl"
 ```
 
-* Drag and drop **CPSegmentedControl.framework* from /Carthage/Build/iOS/ to Linked frameworks and libraries in Xcode (Project>Target>General>Linked frameworks and libraries
+* Drag and drop *CPSegmentedControl.framework* from /Carthage/Build/iOS/ to Linked frameworks and libraries in Xcode (Project>Target>General>Linked frameworks and libraries
 
 * Add new run script
 
