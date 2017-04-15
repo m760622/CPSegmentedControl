@@ -16,16 +16,16 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         let segCtrl = CPSegmentedControl(items: ["一", "二", "三"])
-        segCtrl.addTarget(self, action: #selector(segmentedControlValueChanged), forControlEvents: .ValueChanged)
+        segCtrl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
         segCtrl.translatesAutoresizingMaskIntoConstraints = false
         segCtrl.segmentSelected = { segment in
             print("segment = \(segment)")
         }
         view.addSubview(segCtrl)
         
-        segCtrl.topAnchor.constraintEqualToAnchor(self.view.topAnchor, constant: 64).active = true
-        segCtrl.leftAnchor.constraintEqualToAnchor(self.view.leftAnchor, constant: 0).active = true
-        segCtrl.rightAnchor.constraintEqualToAnchor(self.view.rightAnchor, constant: 0).active = true
+        segCtrl.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 64).isActive = true
+        segCtrl.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
+        segCtrl.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -33,7 +33,7 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func segmentedControlValueChanged(sender: CPSegmentedControl) {
+    func segmentedControlValueChanged(_ sender: CPSegmentedControl) {
         print("index = \(sender.selectedSegmentIndex)")
     }
 

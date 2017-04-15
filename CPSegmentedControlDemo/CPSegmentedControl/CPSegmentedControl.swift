@@ -9,9 +9,9 @@
 import UIKit
 
 public final class CPSegmentedControl: UIControl {
-    public var segmentSelected: ((segment: Int) -> Void)?
+    public var segmentSelected: ((Int) -> Void)?
     
-    private var _selectedSegmentIndex: Int = 0
+    fileprivate var _selectedSegmentIndex: Int = 0
     public var selectedSegmentIndex: Int {
         get {
            return _selectedSegmentIndex
@@ -21,23 +21,23 @@ public final class CPSegmentedControl: UIControl {
         }
     }
     
-    public var textColor: UIColor = UIColor.blackColor() {
+    public var textColor: UIColor = UIColor.black {
         didSet {
             buttons.forEach { button in
-                button.setTitleColor(textColor, forState: .Normal)
+                button.setTitleColor(textColor, for: UIControlState())
             }
         }
     }
     public var highlightedTextColor = UIColor(red: 0, green: 122/255.0, blue: 1.0, alpha: 1.0) {
         didSet {
             buttons.forEach { button in
-                button.setTitleColor(highlightedTextColor, forState: .Selected)
+                button.setTitleColor(highlightedTextColor, for: .selected)
                 
                 
             }
         }
     }
-    public var textFont = UIFont.systemFontOfSize(16) {
+    public var textFont = UIFont.systemFont(ofSize: 16) {
         didSet {
             buttons.forEach { button in
                 button.titleLabel?.font = textFont
@@ -71,26 +71,26 @@ public final class CPSegmentedControl: UIControl {
         }
     }
     
-    private let kButtonBaseTag = 100
-    private let items: [String]
-    private var buttons = [UIButton]()
-    private let line = UIView()
+    fileprivate let kButtonBaseTag = 100
+    fileprivate let items: [String]
+    fileprivate var buttons = [UIButton]()
+    fileprivate let line = UIView()
     public init(items: [String]) {
         self.items = items
         super.init(frame: CGRect.zero)
         
-        for (idx, title) in items.enumerate() {
+        for (idx, title) in items.enumerated() {
             let button = UIButton()
             button.tag = kButtonBaseTag + idx
-            button.setTitle(title, forState: .Normal)
+            button.setTitle(title, for: UIControlState())
             button.titleLabel?.font = textFont
-            button.setTitleColor(textColor, forState: .Normal)
-            button.setTitleColor(highlightedTextColor, forState: .Selected)
-            button.addTarget(self, action: #selector(tap(_:)), forControlEvents: .TouchUpInside)
+            button.setTitleColor(textColor, for: UIControlState())
+            button.setTitleColor(highlightedTextColor, for: .selected)
+            button.addTarget(self, action: #selector(tap(_:)), for: .touchUpInside)
             buttons.append(button)
             addSubview(button)
         }
-        buttons.first?.selected = true
+        buttons.first?.isSelected = true
         
         line.backgroundColor = lineColor
         addSubview(line)
@@ -107,7 +107,7 @@ public final class CPSegmentedControl: UIControl {
         let height = frame.height
         let count = CGFloat(buttons.count)
         let buttonWidth = (width - (count - 1) * titleGap) / count
-        for (idx, button) in buttons.enumerate() {
+        for (idx, button) in buttons.enumerated() {
             button.frame = CGRect(x: CGFloat(idx) * (buttonWidth + titleGap), y: 0, width: buttonWidth, height: height)
         }
         
@@ -118,7 +118,7 @@ public final class CPSegmentedControl: UIControl {
         line.center = center
     }
     
-    override public func intrinsicContentSize() -> CGSize {
+    override public var intrinsicContentSize : CGSize {
         return CGSize(width: UIViewNoIntrinsicMetric, height: 44)
     }
 }
@@ -129,14 +129,14 @@ public extension CPSegmentedControl {
         
         _selectedSegmentIndex = index
         
-        buttons.forEach { $0.selected = false }
+        buttons.forEach { $0.isSelected = false }
         let selectedButton = buttons[_selectedSegmentIndex]
-        selectedButton.selected = true
+        selectedButton.isSelected = true
 
         var center = line.center
         center.x = selectedButton.center.x
         if animated {
-            UIView.animateWithDuration(0.3, animations: {
+            UIView.animate(withDuration: 0.3, animations: {
                 self.line.center = center
             })
         } else {
@@ -146,12 +146,12 @@ public extension CPSegmentedControl {
 }
 
 private extension CPSegmentedControl {
-    @objc func tap(button: UIButton) {
+    @objc func tap(_ button: UIButton) {
         let idx = button.tag - kButtonBaseTag
         guard idx != _selectedSegmentIndex else { return }
         
         selectingSegment(atIndex: idx, animated: true)
-        segmentSelected?(segment: _selectedSegmentIndex)
-        self.sendActionsForControlEvents(UIControlEvents.ValueChanged)
+        segmentSelected?(_selectedSegmentIndex)
+        self.sendActions(for: UIControlEvents.valueChanged)
     }
 }
