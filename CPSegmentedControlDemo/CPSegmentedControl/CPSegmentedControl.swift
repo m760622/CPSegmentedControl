@@ -70,14 +70,27 @@ public final class CPSegmentedControl: UIControl {
             layoutIfNeeded()
         }
     }
+    public var seperatorColor: UIColor = UIColor.clear {
+        didSet {
+            seperator.backgroundColor = seperatorColor
+        }
+    }
+    public var insets: UIEdgeInsets = UIEdgeInsets.zero {
+        didSet {
+            layoutIfNeeded()
+        }
+    }
     
     fileprivate let kButtonBaseTag = 100
     fileprivate let items: [String]
     fileprivate var buttons = [UIButton]()
     fileprivate let line = UIView()
+    fileprivate let seperator = UIView()
+    
     public init(items: [String]) {
         self.items = items
         super.init(frame: CGRect.zero)
+        backgroundColor = UIColor.white
         
         for (idx, title) in items.enumerated() {
             let button = UIButton()
@@ -91,8 +104,8 @@ public final class CPSegmentedControl: UIControl {
             addSubview(button)
         }
         buttons.first?.isSelected = true
-        
         line.backgroundColor = lineColor
+        addSubview(seperator)
         addSubview(line)
     }
     
@@ -106,9 +119,9 @@ public final class CPSegmentedControl: UIControl {
         let width = frame.width
         let height = frame.height
         let count = CGFloat(buttons.count)
-        let buttonWidth = (width - (count - 1) * titleGap) / count
+        let buttonWidth = (width - (count - 1) * titleGap - insets.left - insets.right) / count
         for (idx, button) in buttons.enumerated() {
-            button.frame = CGRect(x: CGFloat(idx) * (buttonWidth + titleGap), y: 0, width: buttonWidth, height: height)
+            button.frame = CGRect(x: insets.left + CGFloat(idx) * (buttonWidth + titleGap), y: 0, width: buttonWidth, height: height)
         }
         
         let selectedButton = buttons[_selectedSegmentIndex]
@@ -116,6 +129,7 @@ public final class CPSegmentedControl: UIControl {
         var center = line.center
         center.x = selectedButton.center.x
         line.center = center
+        seperator.frame = CGRect(x: 0, y: height - lineHeight - lineOffsetY, width: width, height: lineHeight)
     }
     
     override public var intrinsicContentSize : CGSize {
