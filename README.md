@@ -23,3 +23,11 @@ github "cp3hnu/CPSegmentedControl"
 
 * Add Input files *$(SRCROOT)/Carthage/Build/iOS/CPSegmentedControl.framework*
 
+
+
+
+## Requirements
+
+- Swift 4.0+
+- Xcode 9.0+
+- iOS 8+
