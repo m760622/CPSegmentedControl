@@ -32,8 +32,6 @@ public final class CPSegmentedControl: UIControl {
         didSet {
             buttons.forEach { button in
                 button.setTitleColor(highlightedTextColor, for: .selected)
-                
-                
             }
         }
     }

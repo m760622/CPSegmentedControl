@@ -27,16 +27,9 @@ class ViewController: UIViewController {
         segCtrl.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
         segCtrl.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
-    func segmentedControlValueChanged(_ sender: CPSegmentedControl) {
+    @objc func segmentedControlValueChanged(_ sender: CPSegmentedControl) {
         print("index = \(sender.selectedSegmentIndex)")
     }
-
-
 }
 
