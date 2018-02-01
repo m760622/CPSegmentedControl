@@ -29,7 +29,7 @@ class ViewController: UIViewController {
     }
     
     @objc func segmentedControlValueChanged(_ sender: CPSegmentedControl) {
-        print("index = \(sender.selectedSegmentIndex)")
+        print("index = \(sender.segmentIndex)")
     }
 }
 
