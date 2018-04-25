@@ -9,14 +9,21 @@
 import UIKit
 
 public final class CPSegmentedControl: UIControl {
+    public enum SegmentedType {
+        case fill
+        case fit
+    }
+    
     public static var textColor: UIColor = UIColor.black
     public static var highlightedTextColor: UIColor = UIColor(red: 0, green: 122/255.0, blue: 1.0, alpha: 1.0)
     public static var lineColor: UIColor  = UIColor(red: 0, green: 122/255.0, blue: 1.0, alpha: 1.0)
     public static var seperatorColor: UIColor = UIColor.clear
     public static var textFont: UIFont = UIFont.systemFont(ofSize: 16)
-    public static var lineWidth: CGFloat = 50.0
+    public static var lineWidth: CGFloat = 0.0
     public static var lineHeight: CGFloat = 2.0
     public static var lineBottomInset: CGFloat = 0.0
+    public static var seperatorHeight: CGFloat = 2.0
+    public static var seperatorBottomInset: CGFloat = 0.0
     public static var titleGap: CGFloat = 0.0
     public static var insets: UIEdgeInsets = UIEdgeInsets.zero
     
@@ -87,6 +94,19 @@ public final class CPSegmentedControl: UIControl {
         }
     }
     
+    public var seperatorHeight: CGFloat = CPSegmentedControl.seperatorHeight {
+        didSet {
+            layoutIfNeeded()
+        }
+    }
+    
+    // seperator离底部的space
+    public var seperatorBottomInset: CGFloat = CPSegmentedControl.seperatorBottomInset {
+        didSet {
+            layoutIfNeeded()
+        }
+    }
+    
     // title之间的space
     public var titleGap: CGFloat = CPSegmentedControl.titleGap {
         didSet {
@@ -100,14 +120,16 @@ public final class CPSegmentedControl: UIControl {
         }
     }
     
-    fileprivate let kButtonBaseTag = 100
-    fileprivate let items: [String]
-    fileprivate var buttons = [UIButton]()
-    fileprivate let line = UIView()
-    fileprivate let seperator = UIView()
+    private let kButtonBaseTag = 100
+    private let items: [String]
+    private let type: SegmentedType
+    private var buttons = [UIButton]()
+    private let line = UIView()
+    private let seperator = UIView()
     
-    public init(items: [String]) {
+    public init(items: [String], type: SegmentedType) {
         self.items = items
+        self.type = type
         super.init(frame: CGRect.zero)
         backgroundColor = UIColor.white
         
@@ -121,6 +143,9 @@ public final class CPSegmentedControl: UIControl {
             button.addTarget(self, action: #selector(tap(_:)), for: .touchUpInside)
             buttons.append(button)
             addSubview(button)
+            if type == .fit {
+                button.sizeToFit()
+            }
         }
         buttons.first?.isSelected = true
         line.backgroundColor = lineColor
@@ -135,20 +160,37 @@ public final class CPSegmentedControl: UIControl {
     public override func layoutSubviews() {
         super.layoutSubviews()
         
+        let selectedButton = buttons[_segmentIndex]
         let width = frame.width
         let height = frame.height
         let count = CGFloat(buttons.count)
-        let buttonWidth = (width - (count - 1) * titleGap - insets.left - insets.right) / count
-        for (idx, button) in buttons.enumerated() {
-            button.frame = CGRect(x: insets.left + CGFloat(idx) * (buttonWidth + titleGap), y: 0, width: buttonWidth, height: height)
+        
+        if type == .fill {
+            let buttonWidth = (width - (count - 1) * titleGap - insets.left - insets.right) / count
+            for (idx, button) in buttons.enumerated() {
+                button.frame = CGRect(x: insets.left + CGFloat(idx) * (buttonWidth + titleGap), y: 0, width: buttonWidth, height: height)
+            }
+            
+            line.frame = CGRect(x: 0, y: height - lineHeight - lineBottomInset, width: lineWidth > 0 ? lineWidth : buttonWidth, height: lineHeight)
+            line.center.x = selectedButton.center.x
+        } else {
+            var originX = insets.left
+            var allBtnsWidth: CGFloat = 0
+            for button in buttons {
+                allBtnsWidth += button.bounds.width
+            }
+            let titleGap = (width - allBtnsWidth - insets.left - insets.right) / (count - 1)
+            for button in buttons {
+                let buttonWidth = button.bounds.width
+                button.frame = CGRect(x: originX, y: 0, width: buttonWidth, height: height)
+                originX += buttonWidth + titleGap
+            }
+            
+            line.frame = CGRect(x: 0, y: height - lineHeight - lineBottomInset, width: lineWidth > 0 ? lineWidth : selectedButton.bounds.width, height: lineHeight)
+            line.center.x = selectedButton.center.x
         }
         
-        let selectedButton = buttons[_segmentIndex]
-        line.frame = CGRect(x: 0, y: height - lineHeight - lineBottomInset, width: lineWidth > 0 ? lineWidth : buttonWidth, height: lineHeight)
-        var center = line.center
-        center.x = selectedButton.center.x
-        line.center = center
-        seperator.frame = CGRect(x: 0, y: height - lineHeight - lineBottomInset, width: width, height: lineHeight)
+        seperator.frame = CGRect(x: 0, y: height - seperatorHeight - seperatorBottomInset, width: width, height: seperatorHeight)
     }
     
     override public var intrinsicContentSize : CGSize {
@@ -165,15 +207,20 @@ public extension CPSegmentedControl {
         buttons.forEach { $0.isSelected = false }
         let selectedButton = buttons[_segmentIndex]
         selectedButton.isSelected = true
-
-        var center = line.center
-        center.x = selectedButton.center.x
+        
+        func moveLine() {
+            if type == .fit && self.lineWidth == 0 {
+                self.line.bounds.size.width = selectedButton.bounds.width
+            }
+            self.line.center.x = selectedButton.center.x
+        }
+       
         if animated {
             UIView.animate(withDuration: 0.3, animations: {
-                self.line.center = center
+                moveLine()
             })
         } else {
-           self.line.center = center
+           moveLine()
         }
     }
 }
