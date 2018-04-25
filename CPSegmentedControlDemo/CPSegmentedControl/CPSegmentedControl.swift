@@ -127,7 +127,7 @@ public final class CPSegmentedControl: UIControl {
     private let line = UIView()
     private let seperator = UIView()
     
-    public init(items: [String], type: SegmentedType) {
+    public init(items: [String], segmentedType type: SegmentedType = .fill) {
         self.items = items
         self.type = type
         super.init(frame: CGRect.zero)
@@ -143,9 +143,6 @@ public final class CPSegmentedControl: UIControl {
             button.addTarget(self, action: #selector(tap(_:)), for: .touchUpInside)
             buttons.append(button)
             addSubview(button)
-            if type == .fit {
-                button.sizeToFit()
-            }
         }
         buttons.first?.isSelected = true
         line.backgroundColor = lineColor
@@ -177,6 +174,7 @@ public final class CPSegmentedControl: UIControl {
             var originX = insets.left
             var allBtnsWidth: CGFloat = 0
             for button in buttons {
+                button.sizeToFit()
                 allBtnsWidth += button.bounds.width
             }
             let titleGap = (width - allBtnsWidth - insets.left - insets.right) / (count - 1)
