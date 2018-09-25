@@ -42,7 +42,7 @@ public final class CPSegmentedControl: UIControl {
     public var textColor: UIColor = CPSegmentedControl.textColor {
         didSet {
             buttons.forEach { button in
-                button.setTitleColor(textColor, for: UIControlState())
+                button.setTitleColor(textColor, for: .normal)
             }
         }
     }
@@ -136,9 +136,9 @@ public final class CPSegmentedControl: UIControl {
         for (idx, title) in items.enumerated() {
             let button = UIButton()
             button.tag = kButtonBaseTag + idx
-            button.setTitle(title, for: UIControlState())
+            button.setTitle(title, for: .normal)
             button.titleLabel?.font = textFont
-            button.setTitleColor(textColor, for: UIControlState())
+            button.setTitleColor(textColor, for: .normal)
             button.setTitleColor(highlightedTextColor, for: .selected)
             button.addTarget(self, action: #selector(tap(_:)), for: .touchUpInside)
             buttons.append(button)
@@ -192,7 +192,7 @@ public final class CPSegmentedControl: UIControl {
     }
     
     override public var intrinsicContentSize : CGSize {
-        return CGSize(width: UIViewNoIntrinsicMetric, height: 44)
+        return CGSize(width: UIView.noIntrinsicMetric, height: 44)
     }
 }
 
@@ -230,6 +230,6 @@ private extension CPSegmentedControl {
         
         selectingSegment(atIndex: idx, animated: true)
         segmentSelected?(_segmentIndex)
-        self.sendActions(for: UIControlEvents.valueChanged)
+        self.sendActions(for: UIControl.Event.valueChanged)
     }
 }
