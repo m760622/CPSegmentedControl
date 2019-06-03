@@ -28,6 +28,6 @@ github "cp3hnu/CPSegmentedControl"
 
 ## Requirements
 
-- Swift 4.0+
-- Xcode 9.0+
+- Swift 4.2
+- Xcode 10.0
 - iOS 8+
